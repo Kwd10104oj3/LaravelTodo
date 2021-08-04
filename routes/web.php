@@ -11,10 +11,24 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@index');
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::resource("goals", "GoalController")->middleware('auth');
+
+Route::resource("goals.todos", "TodoController")->middleware('auth');
+
+Route::post('/goals/{goal}/todos/{todo}/sort', 'TodoController@sort')->middleware('auth');
+
+Route::resource("tags", "TagController")->middleware('auth');
+
+Route::post('/goals/{goal}/todos/{todo}/tags/{tag}', 'TodoController@addTag')->middleware('auth');
+
+Route::delete('/goals/{goal}/todos/{todo}/tags/{tag}', 'TodoController@removeTag')->middleware('auth');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+if (env('APP_ENV') === 'local') {
+    URL::forceScheme('https');
+}
